@@ -19,7 +19,7 @@ import java.util.List;
 public class CrawlController {
     // 공통 베이스 URL + 파라미터로 page를 붙여서 사용
     private static final String POSITION_LIST_BASE_URL =
-            "https://jumpit-api.saramin.co.kr/api/positions?sort=reg_dt&highlight=false&page=";
+            "https://jumpit-api.saramin.co.kr/api/positions?sort=reg_dt&highlight=false&page=%d";
 
     private final JumpitPositionsFeatureCrawler featureCrawler;
     private final JumpitPositionsListCrawler listCrawler;
@@ -37,10 +37,8 @@ public class CrawlController {
         return crawlresult;
     }
     @GetMapping("/positions/list")
-    public List<JumpitPositionListDto> crawlList(
-            @RequestParam(value = "page", defaultValue = "1") int page
-    ) throws Exception {
-        String url = POSITION_LIST_BASE_URL + page;
+    public List<JumpitPositionListDto> crawlList() throws Exception {
+        String url = POSITION_LIST_BASE_URL;
         log.info("Crawling list from URL={}", url);
         List<JumpitPositionListDto> results = listCrawler.crawl(url);
         log.info(results.toString());

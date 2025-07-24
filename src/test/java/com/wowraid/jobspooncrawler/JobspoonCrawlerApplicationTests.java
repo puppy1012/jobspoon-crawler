@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +20,7 @@ public class JobspoonCrawlerApplicationTests {
 
     @Test
     void parse_snapshot_html() throws IOException {
+
         Path p = Path.of("src/test/resources/sample_jumpit.html");
         String html = Files.readString(p);
         Document doc = Jsoup.parse(html);

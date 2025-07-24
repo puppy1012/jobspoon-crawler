@@ -1,8 +1,8 @@
 
 package com.wowraid.jobspooncrawler;
 
-import com.wowraid.jobspooncrawler.domain.JobPost;
-import com.wowraid.jobspooncrawler.service.JumpitCrawler;
+import com.wowraid.jobspooncrawler.entity.JumpitPositionFeatureDto;
+import com.wowraid.jobspooncrawler.service.JumpitPositionsFeatureCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JobspoonCrawlerApplicationTests {
 
-    private final JumpitCrawler crawler = new JumpitCrawler();
+    private final JumpitPositionsFeatureCrawler crawler = new JumpitPositionsFeatureCrawler();
 
     @Test
     void parse_snapshot_html() throws IOException {
@@ -31,7 +31,7 @@ public class JobspoonCrawlerApplicationTests {
     // Integration test stub (disabled by default because it hits real net)
     //@Test
     void crawl_real_url() throws Exception {
-        JobPost post = crawler.crawl("https://jumpit.saramin.co.kr/position/51050679");
+        JumpitPositionFeatureDto post = crawler.crawl("https://jumpit.saramin.co.kr/position/51050679");
         assertThat(post.getTitle()).isNotBlank();
     }
 }

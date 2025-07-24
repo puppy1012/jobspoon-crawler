@@ -1,5 +1,5 @@
 
-package com.wowraid.jobspooncrawler.domain;
+package com.wowraid.jobspooncrawler.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class JobPost {
+public class JumpitPositionFeatureDto {
     private String title;
     private String company;
     private List<String> techStacks;

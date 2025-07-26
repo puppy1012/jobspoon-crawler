@@ -1,6 +1,6 @@
-package com.wowraid.jobspooncrawler.service;
+package com.wowraid.jobspooncrawler.jumpit.service;
 
-import com.wowraid.jobspooncrawler.entity.JumpitPositionFeatureDto;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionFeatureDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;

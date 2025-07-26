@@ -1,10 +1,10 @@
 
-package com.wowraid.jobspooncrawler.controller;
+package com.wowraid.jobspooncrawler.jumpit.controller;
 
-import com.wowraid.jobspooncrawler.entity.JumpitPositionFeatureDto;
-import com.wowraid.jobspooncrawler.entity.JumpitPositionListDto;
-import com.wowraid.jobspooncrawler.service.JumpitPositionsFeatureCrawler;
-import com.wowraid.jobspooncrawler.service.JumpitPositionsListCrawler;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionFeatureDto;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionListDto;
+import com.wowraid.jobspooncrawler.jumpit.service.JumpitPositionsFeatureCrawler;
+import com.wowraid.jobspooncrawler.jumpit.service.JumpitPositionsListCrawler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,9 +38,8 @@ public class CrawlController {
     }
     @GetMapping("/positions/list")
     public List<JumpitPositionListDto> crawlList() throws Exception {
-        String url = POSITION_LIST_BASE_URL;
-        log.info("Crawling list from URL={}", url);
-        List<JumpitPositionListDto> results = listCrawler.crawl(url);
+        log.info("Crawling list from URL={}", POSITION_LIST_BASE_URL);
+        List<JumpitPositionListDto> results = listCrawler.crawl(POSITION_LIST_BASE_URL);
         log.info(results.toString());
         return results;
     }

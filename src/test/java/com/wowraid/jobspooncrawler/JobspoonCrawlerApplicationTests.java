@@ -1,8 +1,8 @@
 
 package com.wowraid.jobspooncrawler;
 
-import com.wowraid.jobspooncrawler.entity.JumpitPositionFeatureDto;
-import com.wowraid.jobspooncrawler.service.JumpitPositionsFeatureCrawler;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionFeatureDto;
+import com.wowraid.jobspooncrawler.jumpit.service.JumpitPositionsFeatureCrawler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

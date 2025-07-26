@@ -1,4 +1,4 @@
-package com.wowraid.jobspooncrawler.entity;
+package com.wowraid.jobspooncrawler.jumpit.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

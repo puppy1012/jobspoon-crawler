@@ -3,7 +3,7 @@ package com.wowraid.jobspooncrawler.jumpit.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionListDto;
-import com.wowraid.jobspooncrawler.utility.CrawlerApiExecutor;
+import com.wowraid.jobspooncrawler.utility.RetryableRequestExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,7 +25,7 @@ public class JumpitPositionsListCrawler {
         while (true) {
 
             int finalPageid = pageid;
-            List<JumpitPositionListDto> list = CrawlerApiExecutor.executeWithRetry(() ->
+            List<JumpitPositionListDto> list = RetryableRequestExecutor.executeWithRetry(() ->
                     getJumpitPositionList(url, finalPageid)
             );
             if (list == null || list.isEmpty()) break;

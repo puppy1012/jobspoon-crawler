@@ -1,0 +1,9 @@
+publicdata:
+  employment:
+    data_api-key: ${PUBLIC_DATA_EMPLOYMENT_ENCODING_API}
+    base-url: ${PUBLIC_DATA_EMPLOYMENT_BASE_URL}
+
+crawler:
+  chrome:
+    # 실제 로컬 Windows Chrome 경로로 변경
+    binary-path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"

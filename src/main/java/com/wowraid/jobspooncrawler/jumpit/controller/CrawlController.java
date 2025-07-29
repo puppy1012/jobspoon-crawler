@@ -1,21 +1,18 @@
 
-package com.wowraid.jobspooncrawler.controller;
+package com.wowraid.jobspooncrawler.jumpit.controller;
 
-import com.wowraid.jobspooncrawler.entity.JumpitPositionFeatureDto;
-import com.wowraid.jobspooncrawler.entity.JumpitPositionListDto;
-import com.wowraid.jobspooncrawler.service.JumpitPositionsFeatureCrawler;
-import com.wowraid.jobspooncrawler.service.JumpitPositionsListCrawler;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionFeatureDto;
+import com.wowraid.jobspooncrawler.jumpit.entity.JumpitPositionListDto;
+import com.wowraid.jobspooncrawler.jumpit.service.JumpitPositionsFeatureCrawler;
+import com.wowraid.jobspooncrawler.jumpit.service.JumpitPositionsListCrawler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/crawl")
+@RequestMapping("/jumpit")
 public class CrawlController {
     // 공통 베이스 URL + 파라미터로 page를 붙여서 사용
     private static final String POSITION_LIST_BASE_URL =
@@ -29,18 +26,18 @@ public class CrawlController {
         this.listCrawler = listCrawler;
     }
 
-    @GetMapping("/positions/feature")
+    @GetMapping("/feature")
     public JumpitPositionFeatureDto crawl(@RequestParam String url) throws Exception {
         log.info("crawling " + url);
         JumpitPositionFeatureDto crawlresult = featureCrawler.crawl(url);
         log.info(crawlresult.toString());
         return crawlresult;
     }
-    @GetMapping("/positions/list")
+
+    @GetMapping("/list")
     public List<JumpitPositionListDto> crawlList() throws Exception {
-        String url = POSITION_LIST_BASE_URL;
-        log.info("Crawling list from URL={}", url);
-        List<JumpitPositionListDto> results = listCrawler.crawl(url);
+        log.info("Crawling list from URL={}", POSITION_LIST_BASE_URL);
+        List<JumpitPositionListDto> results = listCrawler.crawl(POSITION_LIST_BASE_URL);
         log.info(results.toString());
         return results;
     }

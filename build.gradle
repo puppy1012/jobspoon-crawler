@@ -26,8 +26,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-    // Selenium BOM 선언: 모든 selenium-* 모듈을 4.31.0으로 통일
-    implementation platform('org.seleniumhq.selenium:selenium-bom:4.31.0')
+    // Selenium BOM 선언: 모든 selenium-* 모듈을 4.34.0으로 통일
+    implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')
     // selenium-java 하나만 추가해도 chrome-driver, remote-driver 등이 함께 포함됩니다.
     implementation 'org.seleniumhq.selenium:selenium-java'
     implementation 'io.github.bonigarcia:webdrivermanager:5.5.1'

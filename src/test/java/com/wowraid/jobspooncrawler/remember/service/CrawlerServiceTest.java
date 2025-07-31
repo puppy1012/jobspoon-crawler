@@ -1,12 +1,16 @@
 package com.wowraid.jobspooncrawler.remember.service;
 
+import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.DisplayName;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -124,5 +128,27 @@ class CrawlerServiceTest {
                 doc.getElementById("para").text(),
                 "id가 'para'인 요소의 텍스트가 'Paragraph'이어야 합니다."
         );
+    }
+
+    @Test
+    @DisplayName("parseLiElements: 정상 HTML에서 <li> → <div> → <a> 추출")
+    void parseLiElements() {
+        // given: 두 개의 <li> 요소가 있는 샘플 HTML
+        String html = """
+            <ul>
+              <li><div><a href="/job1">Job 1</a></div></li>
+              <li><div><a href="/job2">Job 2</a></div></li>
+            </ul>
+            """;
+
+        // when: 파싱 메서드 호출
+        List<JobListingDto> list = crawlerService.parseLiElements(html);
+
+        // then: 두 개가 정확히 파싱되고, title/href 값이 일치해야 함
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0).getTitle()).isEqualTo("Job 1");
+        assertThat(list.get(0).getDetailurl()).isEqualTo("/job1");
+        assertThat(list.get(1).getTitle()).isEqualTo("Job 2");
+        assertThat(list.get(1).getDetailurl()).isEqualTo("/job2");
     }
 }

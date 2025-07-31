@@ -1,13 +1,19 @@
 package com.wowraid.jobspooncrawler.remember.service;
 
+import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -30,7 +36,7 @@ public class CrawlerService {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--user-agent=" + USER_AGENT);
         // 필요 시 헤드리스 모드 추가 가능
-        options.addArguments("--headless=new");
+//        options.addArguments("--headless=new");
         log.info("[fetchPageSource] ChromeOptions configured (headless={}, UA={})",
                 options.toString().contains("--headless"), USER_AGENT);
 
@@ -46,7 +52,7 @@ public class CrawlerService {
 
             // 6) JS 로딩 대기
             log.info("[fetchPageSource] Waiting 2 seconds for JS to load");
-            Thread.sleep(2000);
+            Thread.sleep(5000);
 
             // 7) 페이지 소스 및 제목 가져오기
             String pageSource = driver.getPageSource();
@@ -66,6 +72,37 @@ public class CrawlerService {
             log.info("[fetchPageSource] ChromeDriver session closed");
         }
     }
+    /**
+     * URL에서 페이지 소스를 가져와 <li> 요소들만 반환하는 통합 메서드.
+     */
+    public List<JobListingDto> fetchLiElements(String url) {
+        // 1) URL로부터 전체 페이지 소스 가져오기.
+        String html = fetchPageSource(url);
+
+        // 2) 소스에서 <li> 요소 텍스트만 파싱.
+        return parseLiElements(html);
+    }
+    /**
+     * HTML 문자열에서 모든 <li> 요소의 텍스트를 추출하는 메서드.
+     */
+    public List<JobListingDto> parseLiElements(String html) {
+        // Jsoup 파서로 HTML 문서 객체 생성.
+        Document doc = Jsoup.parse(html);
+        // 모든 <li> 요소 선택.
+        Elements items = doc.select("li > div > a");
+        // 요소별 텍스트를 저장할 리스트 생성.
+        List<JobListingDto> results = new ArrayList<>();
+        // 각 <li> 요소의 텍스트 추출 및 리스트에 추가.
+        for (Element li : items) {
+            String title=li.text();
+            String href=li.attr("href");
+            log.info("title= "+title+" href= "+href);
+            results.add(new JobListingDto(title,href));
+        }
+
+        return results;
+    }
+
     /**
      * 페이지의 <title>을 가져옵니다.
      */

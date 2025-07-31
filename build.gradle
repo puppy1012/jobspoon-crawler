@@ -19,24 +19,23 @@ repositories {
 
 dependencies {
     // Spring & 기타
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.jsoup:jsoup:1.17.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
     implementation 'me.paulschwarz:spring-dotenv:3.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-    // Selenium BOM 선언: 모든 selenium-* 모듈을 4.34.0으로 통일
-    implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')
-    // selenium-java 하나만 추가해도 chrome-driver, remote-driver 등이 함께 포함됩니다.
-    implementation 'org.seleniumhq.selenium:selenium-java'
-    implementation 'io.github.bonigarcia:webdrivermanager:5.5.1'
+    // Selenium BOM을 최신 버전(예: 4.35.0)으로 올립니다.
+    implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')    // 수정: Selenium BOM 버전 명시
+    implementation 'org.seleniumhq.selenium:selenium-java'                   // 수정: Selenium Java 의존 추가
+    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'             // 수정: WebDriverManager 의존 추가
 
-    // 테스트
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // 테스트 의존성 추가
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // 수정: Spring Boot 테스트 의존 추가
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'             // 수정: JUnit Platform 런처 의존 추가
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform()  // 수정: JUnit Platform 사용 설정
 }

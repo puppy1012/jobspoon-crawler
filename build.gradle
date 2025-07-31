@@ -26,16 +26,17 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
-    // Selenium BOM을 최신 버전(예: 4.35.0)으로 올립니다.
-    implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')    // 수정: Selenium BOM 버전 명시
-    implementation 'org.seleniumhq.selenium:selenium-java'                   // 수정: Selenium Java 의존 추가
-    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'             // 수정: WebDriverManager 의존 추가
+    // Selenium BOM 기준 버전 통일
+    implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')
+    implementation 'org.seleniumhq.selenium:selenium-java'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
 
-    // 테스트 의존성 추가
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // 수정: Spring Boot 테스트 의존 추가
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'             // 수정: JUnit Platform 런처 의존 추가
+    // 테스트 의존성 (JUnit 5 포함)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.seleniumhq.selenium:selenium-java'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
 }
 
 tasks.named('test') {
-    useJUnitPlatform()  // 수정: JUnit Platform 사용 설정
+    useJUnitPlatform()
 }

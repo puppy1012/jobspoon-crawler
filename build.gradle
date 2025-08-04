@@ -25,7 +25,6 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:3.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
-
     // Selenium BOM 기준 버전 통일
     implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')
     implementation 'org.seleniumhq.selenium:selenium-java'

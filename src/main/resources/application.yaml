@@ -7,3 +7,4 @@ crawler:
   chrome:
     # 실제 로컬 Windows Chrome 경로로 변경
     binary-path: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+

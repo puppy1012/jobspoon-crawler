@@ -1,23 +1,22 @@
 package com.wowraid.jobspooncrawler.remember.controller;
 
 import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
-import com.wowraid.jobspooncrawler.remember.entity.JobPosting;
 import com.wowraid.jobspooncrawler.remember.service.CrawlerService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api")
 public class CrawlerController {
-    @Autowired
-    private CrawlerService crawlerService;
-    private String url= "https://career.rememberapp.co.kr/job/postings";
-//    @PostMapping("/crawl")
+    private final CrawlerService crawlerService;
+
+    public CrawlerController(CrawlerService crawlerService) {
+        this.crawlerService = crawlerService;
+    }
+
+    //    @PostMapping("/crawl")
 //    public List<JobPosting> crawl(@RequestBody String filterJson) throws InterruptedException {
 //        return crawlerService.crawl(filterJson);
     //}
@@ -33,10 +32,10 @@ public class CrawlerController {
     @GetMapping("/url")
     public List<JobListingDto> RememberPostingUrl () {
         // 1) 메서드 진입 로그
-        log.info("[RememberPostingUrl] Start. URL={}", url);
+        log.info("[RememberPostingUrl] Start");
         try {
             // 2) Blocking 메서드 직접 호출
-            List<JobListingDto> pageSource = crawlerService.fetchLiElements(url);
+            List<JobListingDto> pageSource = crawlerService.fetchLiElements();
             // 3) 결과 반환
             return pageSource;
         } catch (Exception ex) {

@@ -1,0 +1,21 @@
+app:
+  remember:
+    keywords:
+      SW개발:
+        - 백엔드
+        - 프론트엔드
+        - 풀스택
+        - iOS
+        - 안드로이드
+      AI·데이터:
+        - AI·ML·DL
+        - MLOps
+        - DBA
+        - 데이터+엔지니어
+        - 데이터+사이언티스트
+        - 데이터+분석가
+        - 기타+AI·데이터
+
+#logging:
+#  level:
+#    org.springframework.boot: DEBUG

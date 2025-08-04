@@ -1,11 +1,14 @@
 package com.wowraid.jobspooncrawler.remember.service;
 
+
 import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -23,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class CrawlerServiceTest {
 
+    // Then: crawlerService 인스턴스를 생성하여 테스트 준비 완료
     private static CrawlerService crawlerService;
 
     /**
@@ -34,8 +38,6 @@ class CrawlerServiceTest {
         // Given: 아직 ChromeDriver가 설정되지 않은 상태
         // When: WebDriverManager를 통해 크롬 드라이버를 자동으로 다운로드 및 경로 설정
         WebDriverManager.chromedriver().setup();
-        // Then: crawlerService 인스턴스를 생성하여 테스트 준비 완료
-        crawlerService = new CrawlerService();
     }
 
     /**

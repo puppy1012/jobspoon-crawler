@@ -33,13 +33,33 @@ public class CrawlerService {
      * URL에서 페이지 소스를 가져와 <li> 요소들만 반환하는 통합 메서드.
      */
     public List<JobListingDto> fetchLiElements() {
-        String query = keywordService.toQueryString("AI·데이터");
-        String url=baseUrl+"?search="+query;
-        log.info("url= "+url);
-        // 1) URL로부터 전체 페이지 소스 가져오기.
-        String html = fetchPageSource(url);
-        // 2) 소스에서 <li> 요소 텍스트만 파싱.
-        return parseLiElements(html);
+        // 전체 결과를 저장할 리스트 초기화.
+        List<JobListingDto> allResults = new ArrayList<>();
+        // 처리할 카테고리 목록 정의.
+        List<String> categories = List.of("SW개발", "AI·데이터");
+        // 각 카테고리에 대해 반복.
+        for (String level1 : categories) {
+            // level1에 해당하는 level2 키워드 목록 조회.
+            List<String> level2keywords = keywordService.getLevel2keywords(level1);
+            // 키워드를 CHUNK_SIZE 단위로 슬라이스하여 처리.
+            for (int start = 0; start < level2keywords.size(); start+=CHUNK_SIZE) {
+                int end = Math.min(start + CHUNK_SIZE, level2keywords.size());
+                List<String> chunk = level2keywords.subList(start, end);
+                // 청크 키워드로 검색 쿼리 생성 및 URL 인코딩.
+                String encodedQuery = keywordService.toQueryString(level1, chunk);
+                // baseUrl과 인코딩된 쿼리를 결합하여 최종 URL 생성.
+                String url = baseUrl + "?search=" + encodedQuery;
+                log.info("Fetching url: " + url);
+                // 해당 URL로부터 페이지 소스 획득.
+                String html = fetchPageSource(url);
+                // HTML에서 <li> 요소를 파싱하여 DTO 리스트로 변환.
+                List<JobListingDto> parsed = parseLiElements(html);
+                // 파싱 결과를 전체 결과에 추가.
+                allResults.addAll(parsed);
+            }
+        }
+        // 누적된 전체 결과 반환.
+        return allResults;
     }
     /**
      * HTML 문자열에서 모든 <li> 요소의 텍스트를 추출하는 메서드.

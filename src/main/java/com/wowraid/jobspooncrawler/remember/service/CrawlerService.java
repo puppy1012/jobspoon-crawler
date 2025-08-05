@@ -41,6 +41,7 @@ public class CrawlerService {
         for (String level1 : categories) {
             // level1에 해당하는 level2 키워드 목록 조회.
             List<String> level2keywords = keywordService.getLevel2keywords(level1);
+
             // 키워드를 CHUNK_SIZE 단위로 슬라이스하여 처리.
             for (int start = 0; start < level2keywords.size(); start+=CHUNK_SIZE) {
                 int end = Math.min(start + CHUNK_SIZE, level2keywords.size());
@@ -68,7 +69,7 @@ public class CrawlerService {
         // Jsoup 파서로 HTML 문서 객체 생성.
         Document doc = Jsoup.parse(html);
         // 모든 <li> 요소 선택.
-        Elements items = doc.select("li > div > a");
+        Elements items = doc.select("li > div:not(:has(h6)) > a[rel=\"noopener noreferrer\"]");
         // 요소별 텍스트를 저장할 리스트 생성.
         List<JobListingDto> results = new ArrayList<>();
         // 각 <li> 요소의 텍스트 추출 및 리스트에 추가.

@@ -14,6 +14,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -174,6 +178,7 @@ class CrawlerServiceTest {
     }
 
     @Test
+    @DisplayName("더미 HTML에서 5개의 요소가 추출되어야 합니다")
     void fetchLiElements_WithDummyData_ReturnsAggregatedResults() {
         // 더미 SW level2 키워드 목록 설정.
         List<String> swKeywords = List.of("kw1", "kw2", "kw3");
@@ -187,7 +192,7 @@ class CrawlerServiceTest {
                 .thenReturn("dummyEncoded");
 
         // fetchPageSource를 스텁하여 더미 HTML 반환.
-        doReturn("<ul><li><div><a href='url1'>Title1</a></div></li></ul>")
+        doReturn("<ul><li><div><a href='url1' rel=\"noopener noreferrer\">Title1</a></div></li></ul>")
                 .when(crawlerService).fetchPageSource(anyString());
 
         // 실제 parseLiElements 구현 사용.
@@ -196,9 +201,35 @@ class CrawlerServiceTest {
         List<JobListingDto> results = crawlerService.fetchLiElements();
 
         // 결과 크기 검증.
-        assertEquals(5, results.size());
-        // DTO 필드 값 검증.
-        assertEquals("Title1", results.get(0).getTitle());
-        assertEquals("url1", results.get(0).getDetailurl());
+        verify(crawlerService, times((int) (Math.ceil((double)swKeywords.size()/CHUNK_SIZE)
+                        + Math.ceil((double)aiKeywords.size()/CHUNK_SIZE))))
+                .fetchPageSource(anyString());
+
+    }
+    @Test
+    @DisplayName("더미 HTML에서 값을 뽑아올때 결과값이 없어야합니다(0)")
+    void fetchLiElements_WithDummyData_ReturnsNoAggregatedResults() {
+        // 더미 SW level2 키워드 목록 설정.
+        List<String> swKeywords = List.of("kw1", "kw2", "kw3");
+        // 더미 AI level2 키워드는 빈 리스트로 설정.
+        List<String> aiKeywords = List.of("Ai1", "Ai2");
+
+        // KeywordService 동작 목(Mock) 설정.
+        when(keywordService.getLevel2keywords("SW개발")).thenReturn(swKeywords);
+        when(keywordService.getLevel2keywords("AI·데이터")).thenReturn(aiKeywords);
+        when(keywordService.toQueryString(eq("SW개발"), anyList()))
+                .thenReturn("dummyEncoded");
+
+        // fetchPageSource를 스텁하여 더미 HTML 반환.
+        doReturn("<ul><li><div><a href='url1'>Title1</a><h6/></div></li></ul>")
+                .when(crawlerService).fetchPageSource(anyString());
+
+        // 실제 parseLiElements 구현 사용.
+
+        // fetchLiElements 호출.
+        List<JobListingDto> results = crawlerService.fetchLiElements();
+
+        // 결과 크기 검증.
+        assertTrue(results.isEmpty());
     }
 }

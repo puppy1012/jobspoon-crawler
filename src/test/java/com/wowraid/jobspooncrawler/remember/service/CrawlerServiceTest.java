@@ -1,13 +1,19 @@
 package com.wowraid.jobspooncrawler.remember.service;
 
-
 import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
+import com.wowraid.jobspooncrawler.remember.keyword.RememberKeywordService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -16,6 +22,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 /**
  * CrawlerService의 주요 메서드(fetchPageSource, fetchPageTitle, fetchDocument)를
@@ -24,11 +33,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * - Base64 data URL 방식을 사용하여 공백, 특수문자 인코딩 문제를 해결합니다.
  * - Given-When-Then 형식으로 각 테스트의 의도를 명확히 주석 처리합니다.
  */
+@ExtendWith(MockitoExtension.class)
 class CrawlerServiceTest {
 
-    // Then: crawlerService 인스턴스를 생성하여 테스트 준비 완료
-    private static CrawlerService crawlerService;
 
+    @Mock
+    private RememberKeywordService keywordService;
+
+    @Spy
+    @InjectMocks
+    private CrawlerService crawlerService;
+    private static final String BASE_URL = "http://test-url";
+    private static final int CHUNK_SIZE = 5;
     /**
      * 테스트 전체에서 공유할 CrawlerService 인스턴스를 초기화합니다.
      * WebDriverManager를 이용해 ChromeDriver 바이너리를 자동으로 설치/설정하도록 합니다.
@@ -39,7 +55,10 @@ class CrawlerServiceTest {
         // When: WebDriverManager를 통해 크롬 드라이버를 자동으로 다운로드 및 경로 설정
         WebDriverManager.chromedriver().setup();
     }
-
+    @BeforeEach
+    void setup() {
+        ReflectionTestUtils.setField(crawlerService,"baseUrl",BASE_URL);
+    }
     /**
      * 주어진 HTML 문자열을 Base64로 인코딩하여
      * data:text/html;base64,<base64> 형태의 data URL을 생성합니다.
@@ -152,5 +171,34 @@ class CrawlerServiceTest {
         assertThat(list.get(0).getDetailurl()).isEqualTo("/job1");
         assertThat(list.get(1).getTitle()).isEqualTo("Job 2");
         assertThat(list.get(1).getDetailurl()).isEqualTo("/job2");
+    }
+
+    @Test
+    void fetchLiElements_WithDummyData_ReturnsAggregatedResults() {
+        // 더미 SW level2 키워드 목록 설정.
+        List<String> swKeywords = List.of("kw1", "kw2", "kw3");
+        // 더미 AI level2 키워드는 빈 리스트로 설정.
+        List<String> aiKeywords = List.of("Ai1", "Ai2");
+
+        // KeywordService 동작 목(Mock) 설정.
+        when(keywordService.getLevel2keywords("SW개발")).thenReturn(swKeywords);
+        when(keywordService.getLevel2keywords("AI·데이터")).thenReturn(aiKeywords);
+        when(keywordService.toQueryString(eq("SW개발"), anyList()))
+                .thenReturn("dummyEncoded");
+
+        // fetchPageSource를 스텁하여 더미 HTML 반환.
+        doReturn("<ul><li><div><a href='url1'>Title1</a></div></li></ul>")
+                .when(crawlerService).fetchPageSource(anyString());
+
+        // 실제 parseLiElements 구현 사용.
+
+        // fetchLiElements 호출.
+        List<JobListingDto> results = crawlerService.fetchLiElements();
+
+        // 결과 크기 검증.
+        assertEquals(5, results.size());
+        // DTO 필드 값 검증.
+        assertEquals("Title1", results.get(0).getTitle());
+        assertEquals("url1", results.get(0).getDetailurl());
     }
 }

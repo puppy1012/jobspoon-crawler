@@ -23,19 +23,7 @@ public class RememberKeywordService {
      * level1 카테고리 이름("SW개발" or "AI·데이터") 을 받아
      * 해당하는 level2 리스트로 JSON 문자열을 조립한 뒤 URL-encode 처리
      */
-    public String toQueryString(String level1) {
-        List<String> level2list;
-        switch (level1) {
-            case "SW개발":
-                level2list = swKeywords;
-                break;
-            case "AI·데이터":
-                level2list = aiKeywords;
-                break;
-            default:
-                level2list = List.of();
-        }
-
+    public String toQueryString(String level1,List<String>level2list) {
         StringBuilder json = new StringBuilder("{\"jobCategoryNames\":[");
         for (int i = 0; i < level2list.size(); i++) {
             String level2 = level2list.get(i);
@@ -48,8 +36,14 @@ public class RememberKeywordService {
         }
         json.append("]}");
         log.info(json.toString());
-        String encoded = URLEncoder.encode(json.toString(), StandardCharsets.UTF_8);
-        log.info("검색 쿼리(JSON→URL-encoded): {}", encoded);
-        return encoded;
+        return URLEncoder.encode(json.toString(), StandardCharsets.UTF_8);
+
+    }
+    public List<String> getLevel2keywords(String level1){
+        switch (level1) {
+            case "SW개발": return swKeywords;
+            case "AI·데이터": return aiKeywords;
+            default:    return List.of();
+        }
     }
 }

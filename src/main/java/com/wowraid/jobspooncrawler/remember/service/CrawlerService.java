@@ -1,9 +1,9 @@
 package com.wowraid.jobspooncrawler.remember.service;
 
 import com.wowraid.jobspooncrawler.remember.application.browser.SimpleDriverProvider;
+import com.wowraid.jobspooncrawler.remember.config.RememberProperties;
 import com.wowraid.jobspooncrawler.remember.dto.JobListingDto;
 import com.wowraid.jobspooncrawler.remember.keyword.RememberKeywordService;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +14,6 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.batch.BatchProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,8 +26,7 @@ public class CrawlerService {
     private static final int CHUNK_SIZE=5;
     private final RememberKeywordService keywordService;
     private final SimpleDriverProvider simpleDriverProvider;
-    @Value("${REMEMBER_BASEURL}")
-    private String baseUrl;
+    private final RememberProperties rememberProperties;
 
     private WebDriver driver; //WebDriver 재사용을 위한 변수처리
 
@@ -38,15 +35,11 @@ public class CrawlerService {
      */
     public List<JobListingDto> fetchLiElements() {
         WebDriver webdriver = simpleDriverProvider.getDriver();
-        // 전체 결과를 저장할 리스트 초기화.
-        List<JobListingDto> allResults = new ArrayList<>();
-        // 처리할 카테고리 목록 정의.
-        List<String> categories = List.of("SW개발", "AI·데이터");
-        // 각 카테고리에 대해 반복.
-        for (String level1 : categories) {
-            // level1에 해당하는 level2 키워드 목록 조회.
-            List<String> level2keywords = keywordService.getLevel2keywords(level1);
+        List<JobListingDto> allResults = new ArrayList<>();// 전체 결과를 저장할 리스트 초기화.
+        List<String> categories = List.of("SW개발", "AI·데이터");// 처리할 카테고리 목록 정의.
 
+        for (String level1 : categories) {// 각 카테고리에 대해 반복.
+            List<String> level2keywords = keywordService.getLevel2keywords(level1);// level1에 해당하는 level2 키워드 목록 조회.
             // 키워드를 CHUNK_SIZE 단위로 슬라이스하여 처리.
             for (int start = 0; start < level2keywords.size(); start+=CHUNK_SIZE) {
                 int end = Math.min(start + CHUNK_SIZE, level2keywords.size());
@@ -54,7 +47,7 @@ public class CrawlerService {
                 // 청크 키워드로 검색 쿼리 생성 및 URL 인코딩.
                 String encodedQuery = keywordService.toQueryString(level1, chunk);
                 // baseUrl과 인코딩된 쿼리를 결합하여 최종 URL 생성.
-                String url = baseUrl + "?search=" + encodedQuery;
+                String url = rememberProperties.getBaseurl() + "?search=" + encodedQuery;
                 log.info("Fetching url: " + url);
                 // 해당 URL로부터 페이지 소스 획득.
                 String html = fetchPageSource(webdriver,url);
@@ -72,7 +65,7 @@ public class CrawlerService {
             log.info("[fetchPageSource] Start ,url={}", url);
             driver.get(url);
             log.info("[fetchPageSource] Page loaded: {}", driver.getCurrentUrl());
-            Thread.sleep(5000); // WebDriverWait로 개선 예정
+            Thread.sleep(rememberProperties.getWaitMillis()); // WebDriverWait로 개선 예정
             String pageSource = driver.getPageSource();
             String pageTitle  = driver.getTitle();
             log.info("[fetchPageSource] Page fetched. title=\"{}\", sourceLength={}",

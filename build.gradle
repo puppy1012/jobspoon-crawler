@@ -23,8 +23,10 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.17.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
     implementation 'me.paulschwarz:spring-dotenv:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     // Selenium BOM 기준 버전 통일
     implementation platform('org.seleniumhq.selenium:selenium-bom:4.34.0')
     implementation 'org.seleniumhq.selenium:selenium-java'

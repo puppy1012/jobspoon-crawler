@@ -21,7 +21,7 @@ class RememberPropertiesTest {
 
     @Test
     void test_remember_properties_isNotBlank() {
-        assertThat(rememberProperties.getBaseurl()).isEqualTo("https://career.rememberapp.co.kr/job/postings");
+        assertThat(rememberProperties.getBaseUrl()).isEqualTo("https://career.rememberapp.co.kr/job/postings");
         assertThat(rememberProperties.getWaitMillis()).isEqualTo(4000);
         assertThat(rememberProperties.getListSelector()).isEqualTo("li > div > a[rel=\"noopener noreferrer\"]");
     }

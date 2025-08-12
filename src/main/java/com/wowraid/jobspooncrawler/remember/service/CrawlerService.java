@@ -27,7 +27,7 @@ public class CrawlerService {
     private final RememberKeywordService keywordService;
     private final SimpleDriverProvider simpleDriverProvider;
     private final RememberProperties rememberProperties;
-
+    private final ListParseService listParseService;
     private WebDriver driver; //WebDriver 재사용을 위한 변수처리
 
     /**
@@ -47,12 +47,12 @@ public class CrawlerService {
                 // 청크 키워드로 검색 쿼리 생성 및 URL 인코딩.
                 String encodedQuery = keywordService.toQueryString(level1, chunk);
                 // baseUrl과 인코딩된 쿼리를 결합하여 최종 URL 생성.
-                String url = rememberProperties.getBaseurl() + "?search=" + encodedQuery;
+                String url = rememberProperties.getBaseUrl() + "?search=" + encodedQuery;
                 log.info("Fetching url: " + url);
                 // 해당 URL로부터 페이지 소스 획득.
                 String html = fetchPageSource(webdriver,url);
                 // HTML에서 <li> 요소를 파싱하여 DTO 리스트로 변환.
-                List<JobListingDto> parsed = parseLiElements(html);
+                List<JobListingDto> parsed = listParseService.parse(html);
                 // 파싱 결과를 전체 결과에 추가.
                 allResults.addAll(parsed);
             }
@@ -77,41 +77,6 @@ public class CrawlerService {
             return "";
         }
     }
-    /**
-     * HTML 문자열에서 모든 <li> 요소의 텍스트를 추출하는 메서드.
-     */
-    public List<JobListingDto> parseLiElements(String html) {
-        // Jsoup 파서로 HTML 문서 객체 생성.
-        Document doc = Jsoup.parse(html);
-        // 모든 <li> 요소 선택.
-        Elements items = doc.select(
-                "li > div"
-                        + " > a[rel=\"noopener noreferrer\"]" //초기화등 버튼요소 제거용
-                        + ":not([href*=\"web_high_salary_position\"])" //광고성 채용공고 제거용
-        );
-                // 요소별 텍스트를 저장할 리스트 생성.
-        List<JobListingDto> results = new ArrayList<>();
-        // 각 <li> 요소의 텍스트 추출 및 리스트에 추가.
-        for (Element li : items) {
-            String title=li.text();
-            String href=li.attr("href");
-            log.info("title= "+title+" href= "+href);
-            results.add(new JobListingDto(title,href));
-        }
-        return results;
-    }
-
-//    //페이지의 <title>을 가져옵니다.
-//    public String fetchPageTitle(String url) {
-//        Document doc = fetchDocument(url);
-//        return doc.title();
-//    }
-//
-//    //fetch()로 가져온 HTML 문자열을 Jsoup으로 파싱하여 Document를 반환합니다.
-//    public Document fetchDocument(String url) {
-//        String html = fetchPageSource(url);
-//        return Jsoup.parse(html);
-//    }
 
     //Selenium Manager로 Chrome을 실행만 합니다.
     public void openChromeWindow() throws InterruptedException {
@@ -127,7 +92,17 @@ public class CrawlerService {
         log.info("Chrome 창이 종료되었습니다.");
     }
 }
-
+//    //페이지의 <title>을 가져옵니다.
+//    public String fetchPageTitle(String url) {
+//        Document doc = fetchDocument(url);
+//        return doc.title();
+//    }
+//
+//    //fetch()로 가져온 HTML 문자열을 Jsoup으로 파싱하여 Document를 반환합니다.
+//    public Document fetchDocument(String url) {
+//        String html = fetchPageSource(url);
+//        return Jsoup.parse(html);
+//    }
 /*
 
 //지정된 URL을 ChromeDriver를 통해 가져온 뒤, HTML을 반환합니다.

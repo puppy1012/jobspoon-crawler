@@ -4,11 +4,11 @@ publicdata:
     base-url: ${PUBLIC_DATA_EMPLOYMENT_BASE_URL}
 crawler:
   chrome:
-    binary-path: 'C:\Program Files\Google\Chrome\Application\chrome.exe'
-    driver-path: 'C:\Users\puppy\.cache\selenium\chromedriver\win64\138.0.7204.183\chromedriver.exe'
-    user-agent: >-
-      Mozilla/5.0 (Windows NT 10.0; Win64; x64)
-      AppleWebKit/537.36 (KHTML, like Gecko)
-      Chrome/138.0.0.0 Safari/537.36
+    binary-path: ${USER_BINARY_PATH}
+    driver-path: ${USER_DRIVER_PATH}
+    user-agent: ${USER_AGENT}
+
   remember:
     base-url: ${REMEMBER_BASEURL}
+    list-selector: ${REMEMBER_LIST_SELECTOR}
+    wait-millis: ${REMEMBER_WAIT_MILLIS}
